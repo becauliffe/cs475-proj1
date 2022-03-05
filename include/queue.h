@@ -6,41 +6,37 @@
 /*			2 for sleep list plus 2 per semaphore		*/
 
 #ifndef NQENT
-#define NQENT	(NPROC + 4 + NSEM + NSEM)
+#define NQENT (NPROC + 4 + NSEM + NSEM)
 #endif
 
-#define	EMPTY	(-1)		/* null value for qnext or qprev index	*/
+#define EMPTY (-1) /* null value for qnext or qprev index	*/
 
-
-//TODO - define queue's data members
 struct queue
 {
-	// TODO - pointer to head qentry
-	// TODO - pointer to tail qentry
-	// TODO - size of queue
+	struct qentry *head;
+	struct qentry *tail;
+	int size;
 };
 
-
-//TODO - define a queue entry's data members
 struct qentry
 {
-	// TODO - process ID
-	// TODO - other members
+	pid32 id;
+	struct qentry *next;
+	struct qentry *prev;
 };
 
-
 /* Queue function prototypes (don't touch!) */
-void    printqueue(struct queue *q);
+void printqueue(struct queue *q);
 
-bool8	isempty(struct queue *q);
-bool8	nonempty(struct queue *q);
-bool8	isfull(struct queue *q);
+bool8 isempty(struct queue *q);
+bool8 nonempty(struct queue *q);
+bool8 isfull(struct queue *q);
 
-pid32	getfirst(struct queue *q);
-pid32	getlast(struct queue *q);
-pid32	remove(pid32 pid, struct queue *q);
-pid32	dequeue(struct queue *q);
-pid32	enqueue(pid32 pid, struct queue *q);
+pid32 getfirst(struct queue *q);
+pid32 getlast(struct queue *q);
+pid32 remove(pid32 pid, struct queue *q);
+pid32 dequeue(struct queue *q);
+pid32 enqueue(pid32 pid, struct queue *q);
 
-struct queue	*newqueue();
-struct qentry	*getbypid(pid32 pid, struct queue *q);
+struct queue *newqueue();
+struct qentry *getbypid(pid32 pid, struct queue *q);
