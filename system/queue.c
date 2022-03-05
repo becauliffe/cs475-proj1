@@ -135,6 +135,7 @@ pid32 dequeue(struct queue *q)
 			q->head->prev = NULL;
 		}
 		q->size -= 1;
+
 		free(temp, sizeof(temp));
 		return temp_p;
 	}
@@ -151,7 +152,6 @@ struct qentry *getbypid(pid32 pid, struct queue *q)
 	if (isbadpid(pid) || isempty(q))
 	{
 		return NULL;
-		kprintf("lol\n");
 	}
 	else
 	{
@@ -180,16 +180,15 @@ struct qentry *getbypid(pid32 pid, struct queue *q)
  */
 pid32 getfirst(struct queue *q)
 {
-	// TODO - return EMPTY if queue is empty
-	// same as dequeue
 	if (isempty(q))
 	{
 		return EMPTY;
 	}
 	else
 	{
-		// pid32 temp = q->head
-		//	dequeue(q);
+		pid32 temp = q->head->id;
+		dequeue(q);
+		return temp;
 	}
 	// TODO - remove process from head of queue and return its pid
 }
@@ -205,6 +204,13 @@ pid32 getlast(struct queue *q)
 	{
 		return EMPTY;
 	}
+	struct qentry *last = q->tail;
+	pid32 temp_pid = last->id;
+	q->tail = last->next;
+	q->tail->prev = NULL;
+
+	free(last, sizeof(last));
+	return temp_pid;
 
 	// TODO - return EMPTY if queue is empty
 
@@ -220,7 +226,28 @@ pid32 getlast(struct queue *q)
 pid32 remove(pid32 pid, struct queue *q)
 {
 	// TODO - return EMPTY if queue is empty
+	if (isempty(q))
+	{
+		return EMPTY;
+	}
+	struct qentry *current = q->head;
+	while (current != NULL)
+	{
+		if (current->id == pid)
+		{
+			struct qentry *eNext = current->next;
+			struct qentry *ePrev = current->prev;
+			eNext->prev = ePrev;
+			ePrev->next = eNext;
+			pid32 tempId = current->id;
+			free(current, sizeof(current));
+			return tempId;
+		}
 
+		current = current->next;
+	}
+
+	return SYSERR;
 	// TODO - return SYSERR if pid is illegal
 
 	// TODO - remove process identified by pid parameter from the queue and return its pid
